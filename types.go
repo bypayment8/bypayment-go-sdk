@@ -90,16 +90,17 @@ type WithdrawListResponse struct {
 	TransactionFee       decimal.Decimal `json:"transactionFee"`                 // 交易手续费
 	ApplyTime            int64           `json:"applyTime"`                      // 申请时间戳（秒）
 	Status               string          `json:"status"`                         // 订单状态
-	AddressURL           string          `json:"addressUrl,omitempty"`           // 地址浏览器链接
+	AddressURL           *string         `json:"addressUrl,omitempty"`           // 地址浏览器链接
 	UserID               int64           `json:"userId"`                         // 用户ID
 	Network              string          `json:"network"`                        // 网络
 	Coin                 string          `json:"coin"`                           // 币种
 	Address              string          `json:"address"`                        // 提现地址
-	TxID                 string          `json:"txId,omitempty"`                 // 交易哈希
-	TxURL                string          `json:"txUrl,omitempty"`                // 交易浏览器链接
+	TxID                 *string         `json:"txId,omitempty"`                 // 交易哈希
+	TxURL                *string         `json:"txUrl,omitempty"`                // 交易浏览器链接
 	CurConfirmTimes      int             `json:"curConfirmTimes"`                // 当前确认次数
 	ConfirmTimes         int             `json:"confirmTimes"`                   // 所需确认次数
-	EstimatedArrivalTime uint64          `json:"estimatedArrivalTime,omitempty"` // 预计到账时间戳（秒）
+	UnlockConfirmTimes   int             `json:"unlockConfirmTimes"`             // 解锁确认次数
+	EstimatedArrivalTime *uint64         `json:"estimatedArrivalTime,omitempty"` // 预计到账时间戳（秒）
 }
 
 // WithdrawDetailResponse 提现订单详情响应

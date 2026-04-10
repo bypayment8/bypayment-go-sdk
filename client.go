@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"sort"
@@ -83,7 +84,7 @@ func MD5Sign(params map[string]interface{}, key string) string {
 		}
 		builder.WriteString(k)
 		builder.WriteString("=")
-		builder.WriteString(fmt.Sprintf("%v", params[k]))
+		builder.WriteString(formatValueForSign(params[k]))
 	}
 	queryString := builder.String()
 
@@ -91,6 +92,29 @@ func MD5Sign(params map[string]interface{}, key string) string {
 	signString := queryString + key
 	hash := md5.Sum([]byte(signString))
 	return fmt.Sprintf("%x", hash)
+}
+
+// formatValueForSign 格式化参数值用于签名计算
+// JSON 解析时数字会被解析为 float64，需要正确处理避免科学计数法
+func formatValueForSign(v interface{}) string {
+	switch val := v.(type) {
+	case float64:
+		if val == math.Trunc(val) {
+			return strconv.FormatInt(int64(val), 10)
+		}
+		return strconv.FormatFloat(val, 'f', -1, 64)
+	case float32:
+		if val == float32(math.Trunc(float64(val))) {
+			return strconv.FormatInt(int64(val), 10)
+		}
+		return strconv.FormatFloat(float64(val), 'f', -1, 32)
+	case int, int8, int16, int32, int64:
+		return fmt.Sprintf("%d", val)
+	case uint, uint8, uint16, uint32, uint64:
+		return fmt.Sprintf("%d", val)
+	default:
+		return fmt.Sprintf("%v", v)
+	}
 }
 
 // doRequest 执行 HTTP 请求（带签名）
